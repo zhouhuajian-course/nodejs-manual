@@ -1,5 +1,43 @@
 # nodejs manual
 
+## import & export 导入 导出
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import  
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export
+
+Every module can have two different types of export, named export and default export. You can have multiple named exports per module but only one default export.   
+有两种不同的导出方式，具名导出和默认导出。你能够在每一个模块中定义多个具名导出，但是只允许有一个默认导出。
+
+```javascript
+// test2.js
+export const name = "xiaoming"
+var age = 18
+
+function intro() {
+    return name + age
+}
+export { age, intro }
+const info = {
+    name,
+    age
+}
+export default info  // 默认导出，导入时可以自定义变量名
+```
+
+```javascript
+// test1.js
+import {name, age, intro} from "./test2.js"
+import thisIsATest from "./test2.js"   // 导入时可以自定义变量名
+
+console.log(name, age, intro, thisIsATest)
+```
+
+```shell
+$ node .\test1.js
+xiaoming 18 [Function: intro] { name: 'xiaoming', age: 18 }
+```
+
+
 ## 模块名 module_name
 
 避免模块名冲突
