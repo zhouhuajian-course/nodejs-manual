@@ -1,5 +1,13 @@
 # nodejs manual
 
+## 模块名 module_name
+
+避免模块名冲突
+
+http 核心模块  
+@someorganization/http 某个组织的http模块    
+node:http nodejs官方的http模块  
+
 ## 非常方便的启动只有静态页面的 Web 服务器
 
 在静态页面的根目录，运行 npx serve 即可，非常方便，而且还自动帮你复制了URL。
