@@ -1,5 +1,11 @@
 # nodejs manual
 
+1. npm install 安装项目依赖 (package.json) 出现，表示有四个包正在寻找资金支持
+    ```text
+    4 packages are looking for funding
+      run `npm fund` for details
+    ```
+
 ## import & export 导入 导出
 
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import  
