@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/9e59c621-2ede-4200-ae6d-b7119357a012)# nodejs manual
+# nodejs manual
 
 npm 官网、包搜索 https://www.npmjs.com/ (npmjs.org会跳转到这页面)
 
