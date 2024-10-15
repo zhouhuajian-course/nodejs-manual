@@ -1,6 +1,49 @@
-# nodejs manual
+![image](https://github.com/user-attachments/assets/9e59c621-2ede-4200-ae6d-b7119357a012)# nodejs manual
 
 npm 官网、包搜索 https://www.npmjs.com/ (npmjs.org会跳转到这页面)
+
+## Node.js
+
+1. Node.js® 是一个免费、开源、跨平台的 JavaScript 运行时环境，它让开发人员能够创建服务器、Web 应用、命令行工具和脚本。不是一门编程语言，更准确的说法是 JS 运行时环境；`浏览器和 Node.js 都使用 JavaScript 作为编程语言。`
+2. 可以使用 `require` (CJS) 或 `import` (MJS) 来导入模块；
+3. Node.js 在浏览器之外运行 V8 JavaScript 引擎（Google Chrome 的核心）。这使得 Node.js 的性能非常出色。`https://nodejs.org/zh-cn/learn/getting-started/introduction-to-nodejs`
+4. 在 Node.js 中，可以毫无问题地使用新的 ECMAScript 标准，因为您不必等待所有用户更新他们的浏览器 - 您可以通过更改 Node.js 版本来决定使用哪个 ECMAScript 版本，并且您还可以通过使用标志运行 Node.js 来启用特定的实验性功能。
+5. 进程 线程
+```text
+Node.js 应用程序在单个进程中运行，无需为每个请求创建新线程。Node.js 在其标准库中提供了一组异步 I/O 原语，可防止 JavaScript 代码阻塞，并且通常，Node.js 中的库是使用非阻塞范例编写的，这使得阻塞行为成为例外而不是常态。
+
+当 Node.js 执行 I/O 操作（如从网络读取、访问数据库或文件系统）时，Node.js 不会阻塞线程并浪费 CPU 周期等待，而是会在响应返回时恢复操作。
+
+这使得 Node.js 能够使用单个服务器处理数千个并发连接，而​​不会引入管理线程并发的负担，而这可能是一个重要的错误来源。
+```
+6. nvm是运行 Node.js 的一种流行方式。它允许您轻松切换 Node.js 版本，并安装新版本以尝试并在出现问题时轻松回滚。使用旧 Node.js 版本测试您的代码也非常有用。 `https://nodejs.org/zh-cn/learn/getting-started/how-to-install-nodejs`
+7. 异步编程 `https://nodejs.org/zh-cn/learn/getting-started/how-much-javascript-do-you-need-to-know-to-use-nodejs`
+```text
+以下概念对于理解异步编程也是关键，异步编程是 Node.js 的基本部分之一：
+
+- 异步编程和回调
+- 计时器
+- 承诺
+- Async 和 Await
+- 闭包
+- 事件循环
+```
+8. Node.js 和浏览器之间的区别 `https://nodejs.org/zh-cn/learn/getting-started/differences-between-nodejs-and-the-browser`
+```text
+浏览器和 Node.js 都使用 JavaScript 作为编程语言。构建在浏览器中运行的应用程序与构建 Node.js 应用程序完全不同。尽管它们始终都是 JavaScript，但仍存在一些关键差异，这些差异使体验截然不同。
+
+在浏览器中，您大部分时间都在与 DOM 或其他 Web 平台 API（如 Cookies）进行交互。当然，这些在 Node.js 中并不存在。您没有document以及window浏览器提供的所有其他对象。
+而在浏览器中，我们没有 Node.js 通过其模块提供的所有优良 API，例如文件系统访问功能。
+另一个很大的区别是，在 Node.js 中，您可以控制环境。除非您正在构建任何人都可以部署到任何地方的开源应用程序，否则您知道将在哪个版本的 Node.js 上运行该应用程序。与浏览器环境相比，您无法选择访问者将使用哪种浏览器，这非常方便。
+
+另一个区别是 Node.js 同时支持 CommonJS 和 ES 模块系统（自 Node.js v12 起），而在浏览器中，我们开始看到 ES 模块标准正在实施。
+
+In practice, this means that you can use both require() and import in Node.js, while you are limited to import in the browser.
+```
+9. V8 引擎 `V8的名字来源于汽车的“V型8缸发动机”` `V8最初是由 Lars Bak 团队开发的，以汽车的 V8 发动机（有八个气缸的V型发动机）进行命名，预示着这将是一款性能极高的 JavaScript 引擎，在 2008年9月2号 同 chrome 一同开源发布。` `V8 是 JavaScript 引擎，即它解析并执行 JavaScript 代码。DOM 和其他 Web 平台 API（它们都构成了运行时环境）由浏览器提供。` `https://nodejs.org/zh-cn/learn/getting-started/the-v8-javascript-engine` `V8发动机是有八个气缸的V型发动机，八个气缸分成两排，一排四个，两排气缸之间成一定的角度，这个角度一般为90°，亦有较窄夹角八个活塞驱动单一曲轴的例子[1]。` `https://zh.wikipedia.org/wiki/V8%E5%8F%91%E5%8A%A8%E6%9C%BA`
+10. V8 引擎 2008 年发布，Node.js 2009 选择 V8 引擎，`V8 于 2009 年被选为 Node.js 的引擎，随着 Node.js 的流行度激增，V8 成为现在为大量用 JavaScript 编写的服务器端代码提供支持的引擎。`
+11. Node.js 除了 开发 服务端，还可以桌面应用程序。`Node.js 生态系统非常庞大，这要归功于 V8，它还为桌面应用程序和 Electron 等项目提供支持。`
+12. npm是 Node.js 的标准包管理器。
 
 ## npm Nodejs 包管理工具
 
