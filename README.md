@@ -136,6 +136,44 @@ This file is intended to be committed into source repositories, and serves vario
 
 When npm creates or updates package-lock.json, it will infer line endings and indentation from package.json so that the formatting of both files matches.
 ```
+29. 注册中心 `https://docs.npmjs.com/cli/v10/using-npm/registry` `npm 默认配置为使用https://registry.npmjs.org上的npm 公共注册中心。使用 npm 公共注册中心 须遵守https://docs.npmjs.com/policies/terms上的使用条款。`
+30. 安装包时，包名称 `https://docs.npmjs.com/cli/v10/using-npm/package-spec`
+```text
+Package name
+
+- [<@scope>/]<pkg>
+- [<@scope>/]<pkg>@<tag>
+- [<@scope>/]<pkg>@<version>
+- [<@scope>/]<pkg>@<version range>
+
+Refers to a package by name, with or without a scope, and optionally tag, version, or version range. This is typically used in combination with the registry config to refer to a package in a registry.
+
+Examples:
+
+- npm
+- @npmcli/arborist
+- @npmcli/arborist@latest
+- npm@6.13.1
+- npm@^4.0.0
+```
+31. scope `https://docs.npmjs.com/cli/v10/using-npm/scope`
+32. !!! 这块内容注意，好像跟很多老师讲的内容，不是特别符合。!!! scripts 生命周期脚本 `Life Cycle Scripts` `These all can be executed by running npm run-script <stage> or npm run <stage> for short.` `https://docs.npmjs.com/cli/v10/using-npm/scripts` 
+```text
+npm start
+prestart
+start
+poststart
+If there is a server.js file in the root of your package, then npm will default the start command to node server.js. prestart and poststart will still run in this case.
+```
+33. 卸载 npm `sudo npm uninstall npm -g` `https://docs.npmjs.com/cli/v10/using-npm/removal`
+34. 三个非常重要的文档模块 `https://docs.npmjs.com/cli/v10`
+```text
+npm CLI
+
+- CLI Commands
+- Configuring npm
+- Using npm (这块要特别留意，很重要)
+```
 
 ## import & export 导入 导出
 
