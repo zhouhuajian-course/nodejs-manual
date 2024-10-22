@@ -2,6 +2,14 @@
 
 npm 官网、包搜索 https://www.npmjs.com/ (npmjs.org会跳转到这页面)
 
+## node:worker_threads
+
+该node:worker_threads模块允许使用并行执行 JavaScript 的线程。
+
+Workers（线程）对于执行 CPU 密集型 JavaScript 操作很有用。它们对 I/O 密集型工作帮助不大。Node.js 内置的异步 I/O 操作比 Workers 更高效。
+
+https://nodejs.org/docs/v20.18.0/api/worker_threads.html#worker-threads
+
 ## Node.js 两种类型的线程
 
 Node.js 中有两种类型的线程：一个事件循环（又称主循环、主线程、事件线程等）和一个k工作线程池（又称线程池）。
