@@ -2,6 +2,200 @@
 
 npm 官网、包搜索 https://www.npmjs.com/ (npmjs.org会跳转到这页面)
 
+## Node.js 事件循环 Event Loop
+
+记住这句话，非常重要
+
+`当 Node.js 启动时，它会初始化事件循环，处理提供的输入脚本（或进入 REPL ，本文档未涉及此内容），该脚本可能会进行异步 API 调用、计划计时器或调用 process.nextTick()，然后开始处理事件循环。`
+
+`When Node.js starts, it initializes the event loop, processes the provided input script (or drops into the REPL, which is not covered in this document) which may make async API calls, schedule timers, or call process.nextTick(), then begins processing the event loop.`
+
+调试如下的代码，可以很好的理解这句话，先初始化时间循环，然后处理提供的脚本，然后开始处理事件循环；也就是用户写的代码，先执行完，然后才开始事件循环。也就是 执行用户写的代码，和开始事件循环，用的是同一个线程(主线程 main thread)，如果用户写的代码阻塞了，事件循环也会之后才开始。所有的回调函数也是在主线程执行的。
+
+```javascript
+setTimeout(() => {
+  console.log("setTimeout");
+}, 0)
+setTimeout(() => {
+  console.log("setTimeout2");
+}, 0)
+
+const process = require("process")
+process.nextTick(() => {
+  console.log("nextTick");
+})
+process.nextTick(() => {
+  console.log("nextTick2");
+})
+
+const fs = require('fs');
+fs.readFile('./file.js', () => {
+  console.log('readFile')
+})
+fs.readFile('./file.js', () => {
+  console.log('readFile2')
+})
+
+// 阻塞代码三秒钟 
+const now = +new Date()
+while (+new Date() < now + 3000) { }
+
+/*
+> node index.js
+// 等3秒后，才输出后面的内容
+nextTick
+nextTick2
+setTimeout
+setTimeout2
+readFile
+readFile2
+*/
+```
+
+回调函数也是在主线程执行，下面代码可以方便理解
+
+```javascript
+
+setTimeout(() => {
+  console.log("setTimeout");
+  // 阻塞代码三秒钟 
+  const now = +new Date()
+  while (+new Date() < now + 3000) { }
+}, 0)
+
+const process = require("process")
+process.nextTick(() => {
+  console.log("nextTick");
+  // 阻塞代码三秒钟 
+  const now = +new Date()
+  while (+new Date() < now + 3000) { }
+})
+
+const fs = require('fs');
+fs.readFile('./file.js', () => {
+  console.log('readFile')
+   // 阻塞代码三秒钟 
+   const now = +new Date()
+   while (+new Date() < now + 3000) { }
+})
+
+// 阻塞代码三秒钟 
+const now = +new Date()
+while (+new Date() < now + 3000) { }
+
+/*
+> node index.js
+// 等了三秒钟
+nextTick
+// 等了三秒钟
+setTimeout
+// 等了三秒钟
+readFile
+// 等了三秒钟
+*/
+```
+
+`https://github.com/nodejs/node/blob/47ad609d647ca504104c35cc97160e851af16e70/deps/uv/src/win/core.c#L619` Node.js 的源码可以方便理解 事件循环的6个阶段
+
+每个阶段都有一个要执行的回调的 FIFO 队列。也就是每个阶段，其实都有while 或 for 循环语句，尝试清空这点阶段涉及的回调队列。上个阶段和下个阶段之间，会尝试清空 nextTick队列 Microtasks队列，所以 process.nextTick 和 Promise 的回调函数，会在上个阶段和下个阶段之间 执行。
+
+```c
+int uv_run(uv_loop_t *loop, uv_run_mode mode) {
+  DWORD timeout;
+  int r;
+  int can_sleep;
+
+  r = uv__loop_alive(loop);
+  if (!r)
+    uv_update_time(loop);
+
+  /* Maintain backwards compatibility by processing timers before entering the
+   * while loop for UV_RUN_DEFAULT. Otherwise timers only need to be executed
+   * once, which should be done after polling in order to maintain proper
+   * execution order of the conceptual event loop. */
+  if (mode == UV_RUN_DEFAULT && r != 0 && loop->stop_flag == 0) {
+    uv_update_time(loop);
+    uv__run_timers(loop);
+  }
+
+  while (r != 0 && loop->stop_flag == 0) {
+    can_sleep = loop->pending_reqs_tail == NULL && loop->idle_handles == NULL;
+
+    uv__process_reqs(loop);
+    uv__idle_invoke(loop);
+    uv__prepare_invoke(loop);
+
+    timeout = 0;
+    if ((mode == UV_RUN_ONCE && can_sleep) || mode == UV_RUN_DEFAULT)
+      timeout = uv_backend_timeout(loop);
+
+    uv__metrics_inc_loop_count(loop);
+
+    if (pGetQueuedCompletionStatusEx)
+      uv__poll(loop, timeout);
+    else
+      uv__poll_wine(loop, timeout);
+
+    /* Process immediate callbacks (e.g. write_cb) a small fixed number of
+     * times to avoid loop starvation.*/
+    for (r = 0; r < 8 && loop->pending_reqs_tail != NULL; r++)
+      uv__process_reqs(loop);
+
+    /* Run one final update on the provider_idle_time in case uv__poll*
+     * returned because the timeout expired, but no events were received. This
+     * call will be ignored if the provider_entry_time was either never set (if
+     * the timeout == 0) or was already updated b/c an event was received.
+     */
+    uv__metrics_update_idle_time(loop);
+
+    uv__check_invoke(loop);
+    uv__process_endgames(loop);
+
+    uv_update_time(loop);
+    uv__run_timers(loop);
+
+    r = uv__loop_alive(loop);
+    if (mode == UV_RUN_ONCE || mode == UV_RUN_NOWAIT)
+      break;
+  }
+
+  /* The if statement lets the compiler compile it to a conditional store.
+   * Avoids dirtying a cache line.
+   */
+  if (loop->stop_flag != 0)
+    loop->stop_flag = 0;
+
+  return r;
+}
+```
+
+https://nodejs.org/zh-cn/learn/asynchronous-work/event-loop-timers-and-nexttick
+
+https://nodejs.org/zh-cn/learn/asynchronous-work/understanding-processnexttick
+
+https://nodejs.org/en/learn/asynchronous-work/dont-block-the-event-loop
+
+As you try to understand the Node.js event loop, one important part of it is process.nextTick(). Every time the event loop takes a full trip, we call it a tick.
+
+(When a clock or watch ticks, it makes a sound every second.)
+
+当你尝试理解 Node.js 事件循环时，它的一个重要部分是process.nextTick()。每次事件循环完成一次完整的行程，我们都称之为一个 tick。
+
+当我们将一个函数传递给时process.nextTick()，我们指示引擎在当前操作结束时、下一个事件循环开始之前调用此函数
+
+
+
+```text
+某博主的总结，还可以。新版本的Node.js可能会有改动
+
+- Node.js 事件循环 分 6大阶段。timer阶段 pending阶段 prepare阶段 poll阶段 check阶段 close阶段
+- nextTick队列 Microtasks队列 在每个阶段完成后执行，nextTick优先级大于Microtasks(Promise)
+- poll阶段 主要处理I/O 如果没其他任务，会处于轮询阻塞阶段
+- timer阶段 主要处理 定时器/延迟器 他们并非准确的，而且创建需要额外的性能浪费，执行还受到poll阶段的影响
+- pending 阶段处理 I/O 过期的回调任务
+- check 阶段处理 setImmediate
+```
+
 ## Node.js
 
 1. Node.js® 是一个免费、开源、跨平台的 JavaScript 运行时环境，它让开发人员能够创建服务器、Web 应用、命令行工具和脚本。不是一门编程语言，更准确的说法是 JS 运行时环境；`浏览器和 Node.js 都使用 JavaScript 作为编程语言。`
