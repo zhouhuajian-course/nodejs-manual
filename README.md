@@ -2,6 +2,37 @@
 
 npm 官网、包搜索 https://www.npmjs.com/ (npmjs.org会跳转到这页面)
 
+## Node.js 两种类型的线程
+
+Node.js 中有两种类型的线程：一个事件循环（又称主循环、主线程、事件线程等）和一个k工作线程池（又称线程池）。
+
+In Node.js there are two types of threads: one Event Loop (aka the main loop, main thread, event thread, etc.), and a pool of k Workers in a Worker Pool (aka the threadpool).
+
+```text
+来自网络：
+
+Node.js 使用两种类型的线程：
+
+通过事件循环处理主线程，
+工作池中有许多辅助线程
+事件循环负责获取回调或函数，并将其注册以供将来执行。它与正确的 JavaScript 代码在同一线程中运行。一旦 JavaScript 操作阻塞了线程，事件循环也会被阻塞。
+
+工作池是一个执行模型，负责产生和处理不同的线程。它同步执行任务，然后将结果返回到事件循环，最后事件循环将结果提供给回调。
+
+总而言之，工作池负责异步 I/O 操作，即与系统磁盘和网络的交互。像 fs 和 crypto 这样的模块是使用工作池的主要模块。
+
+由于工作池是在 libuv 库(https://en.wikipedia.org/wiki/Libuv)中实现的，Node.js 在 JS 和 C++ 之间进行内部通信时会稍有延迟。不过这几乎是不可察觉的。
+
+一切都很好，直到我们遇到同步执行复杂操作的要求。任何需要大量时间执行的函数都会导致主线程阻塞。
+
+如果程序具有多个占用大量 CPU 的函数，将会导致服务器吞吐量的显着下降。在最坏的情况下，服务器将会失去响应，并且无法将任务委派给工作池。
+
+诸如 AI、大数据和机器学习之类的领域无法从 Node.js 中受益，因为这些操作阻塞了主线程，并使服务器失去响应。但是这随着 Node.js v10.5.0 的到来而改变，该版本增加了对多线程的支持。
+```
+
+
+https://nodejs.org/en/learn/asynchronous-work/dont-block-the-event-loop
+
 ## Node.js 事件循环 Event Loop
 
 记住这句话，非常重要
