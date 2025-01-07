@@ -567,7 +567,7 @@ https://www.npmjs.com/package/json-server
 
 ```text
 添加数据
-    POST /posts 数据要提供ID，不提供ID，则json-server会生成一个ID，并非自增，例如    "id": "5d55"；貌似要提供字符串格式的ID
+    POST /posts 数据要提供ID，不提供ID，则json-server会生成一个ID，并非自增，例如    "id": "5d55"；貌似要提供字符串格式的ID；Postman 可以 raw 格式，也可以 raw 再指定 json 格式
 删除数据
     DELETE http://localhost:3000/posts/2
 修改数据
