@@ -536,6 +536,63 @@ NVM NodeJS Version Manager
        20.15.0
      * 12.14.0 (Currently using 64-bit executable)
    ```
-   
 
+## json-server 
 
+https://www.npmjs.com/package/json-server
+
+可以对数据增删改查，修改的数据，会更新到磁盘文件 例如 db.json
+
+注意：
+1. ID貌似要字符串类型，数字类型好像不行
+2. 新版 json-server 不需要加 --watch，默认就是会监听文件的修改
+
+```json
+{
+  "posts": [
+    { "id": "1", "title": "a title", "views": 100 },
+    { "id": "2", "title": "another title", "views": 200 }
+  ],
+  "comments": [
+    { "id": "1", "text": "a comment about post 1", "postId": "1" },
+    { "id": "2", "text": "another comment about post 1", "postId": "1" }
+  ],
+  "profile": {
+    "name": "typicode"
+  }
+}
+```
+
+简单示例
+
+```text
+添加数据
+    POST /posts 数据要提供ID，不提供ID，则json-server会生成一个ID，并非自增，例如    "id": "5d55"；貌似要提供字符串格式的ID
+删除数据
+    DELETE http://localhost:3000/posts/2
+修改数据
+    PUT /posts/2 会覆盖数据 例如  {"title": "a new title"} 最后数据会变成  {"title": "a new title","id": "2"}
+    PATCH  /posts/1 只是修改指定数据， 例如 {"title": "this is a title"} 最后数据变成 {"id": "1","title": "this is a title","views": 100}，PATCH 打补丁的意思，小修改
+查询数据（通过加查询参数，还可以排序、分页、JOIN其他表等）
+    GET /posts
+    GET /posts/:id
+```
+
+如果有 ./public ，里面的 html 文件，也可以访问，例如有 home.html login.html，访问时可以省略 html 后缀，这个./public 可以通过参数修改，还可以填多个目录
+
+http://localhost:3000/home  
+http://localhost:3000/home.html  
+http://localhost:3000/login  
+http://localhost:3000/login.html  
+
+```
+> json-server --help
+Usage: json-server [options] <file>
+
+Options:
+  -p, --port <port>  Port (default: 3000)
+  -h, --host <host>  Host (default: localhost)
+  -s, --static <dir> Static files directory (multiple allowed)
+  --help             Show this message
+  --version          Show version number
+```
