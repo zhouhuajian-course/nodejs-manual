@@ -537,7 +537,7 @@ NVM NodeJS Version Manager
      * 12.14.0 (Currently using 64-bit executable)
    ```
 
-## json-server 
+## JSON Server (json-server) 
 
 https://www.npmjs.com/package/json-server
 
@@ -545,7 +545,32 @@ https://www.npmjs.com/package/json-server
 
 注意：
 1. ID貌似要字符串类型，数字类型好像不行
-2. 新版 json-server 不需要加 --watch，默认就是会监听文件的修改
+2. 新版 json-server 不需要加 --watch，默认就是会监听文件的修改，这是老版本的参数
+3. 默认端口 3000
+4. 每一次运行，都会随机显示个 颜文字 ( ˶ˆ ᗜ ˆ˵ ) ♡⸜(˶˃ ᵕ ˂˶)⸝♡ 数量不多，可能会两次运行显示一样。颜文字，起源于美国 `:-)`，比较简单，日本发扬光大 Kaomoji
+
+```
+> json-server db.json5
+JSON Server started on PORT :3000
+Press CTRL-C to stop
+Watching db.json5...
+
+( ˶ˆ ᗜ ˆ˵ )
+
+Index:
+http://localhost:3000/
+
+Static files:
+Serving ./public directory if it exists
+
+Endpoints:
+http://localhost:3000/posts
+http://localhost:3000/comments
+http://localhost:3000/profile
+```
+
+使用 `json-server --watch db.json5` 会提示 `--watch/-w can be omitted, JSON Server 1+ watches for file changes by default`
+
 
 ```json
 {
