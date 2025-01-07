@@ -541,7 +541,7 @@ NVM NodeJS Version Manager
 
 https://www.npmjs.com/package/json-server
 
-相当于，我们创建了一个数据库，里面放了数据，json-server，帮我们对数据进行增删改查
+相当于，我们创建了一个数据库，里面放了数据，json-server，帮我们对数据进行增删改查，当然最开始的数据库里面也可以没有任何数据，后续通过接口来添加数据。
 
 可以对数据增删改查，修改的数据，会更新到磁盘文件 例如 db.json
 
