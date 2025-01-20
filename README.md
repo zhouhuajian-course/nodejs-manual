@@ -715,3 +715,75 @@ viteDevServer.printUrls()
 viteDevServer.bindCLIShortcuts({ print: false })
 
 ```
+
+## esbuild 构建工具
+
+https://esbuild.github.io/
+
+es 是 ECMAScript 缩写
+
+`npm install --save-dev esbuild`
+
+看版本
+
+`.\node_modules\.bin\esbuild --version`
+
+```
+PS C:\Users\zhouhuajian\Desktop\test\esbuild-demo> .\node_modules\.bin\esbuild --version
+0.24.2
+```
+
+创建 main.ts
+
+```typescript
+interface Person {
+  name: string;
+  age: number;
+}
+
+const person: Person = {
+  name: 'xiaoming',
+  age: 18
+}
+
+console.log(person);
+```
+
+`.\node_modules\.bin\esbuild  .\main.ts --outfile=out.js`
+
+或者用 API 来 build
+
+```javascript
+// esbuild.js
+import * as esbuild from "esbuild";
+
+await esbuild.build({
+  entryPoints: ['main.ts'],
+  bundle: true,
+  outdir: 'dist',
+  minify: true
+})
+```
+
+write 为 false 的时候，不会写磁盘，可以拿到 编译结果的outputfiles，自己手动操作写磁盘或做其他事情
+
+```javascript
+import * as esbuild from "esbuild";
+
+const buildResult = await esbuild.build({
+  entryPoints: ['main.ts', 'test.js'],
+  bundle: true,
+  outdir: 'dist',
+  write: false
+  // minify: true
+})
+
+console.log(buildResult.outputFiles);
+console.log(buildResult.outputFiles[0].path);
+console.log(buildResult.outputFiles[0].contents);  // Uint8Array 
+console.log(new TextDecoder().decode(buildResult.outputFiles[0].contents));
+```
+
+
+
+
